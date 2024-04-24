@@ -883,6 +883,7 @@ class CIForms {
 	 */
 	public static function ci_form_section( Parser $parser, ...$argv ) {
 		$output = self::ci_form_section_process( $parser->getTitle(), $argv );
+		// @phan-suppress-next-line SecurityCheck-XSS
 		return [ $output, 'noparse' => true, 'isHTML' => true ];
 	}
 

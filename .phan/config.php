@@ -10,6 +10,9 @@ $cfg['suppress_issue_types'][] = 'PhanPluginNeverReturnMethod';
 $cfg['suppress_issue_types'][] = 'PhanPossiblyUndeclaredVariable';
 $cfg['suppress_issue_types'][] = 'PhanTypeMismatchArgumentInternal';
 
+// Ignored to allow upgrading Phan, to be fixed later.
+$cfg['suppress_issue_types'][] = 'MediaWikiNoEmptyIfDefined';
+
 $cfg['directory_list'] = array_merge(
 	$cfg['directory_list'], [
 		'vendor/dompdf/dompdf',
