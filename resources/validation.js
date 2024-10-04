@@ -89,7 +89,6 @@ $( function () {
 		$( this ).data( 'form-index', index );
 	} );
 
-	// eslint-disable-next-line no-unused-vars
 	$( '.ci_form li' ).each( function ( index ) {
 		var el = this;
 		var section_el = $( this ).closest( '.ci_form_section' );
@@ -106,7 +105,6 @@ $( function () {
 				var count = $( section_el ).find( 'input[type=checkbox]:checked' ).length;
 
 				if ( count > max_answers ) {
-					// eslint-disable-next-line no-alert
 					alert( msg1.replace( '$1', max_answers ) );
 					return false;
 				}
@@ -127,7 +125,6 @@ $( function () {
 				var count = $( section_el ).find( 'input[type=checkbox]:checked' ).length;
 
 				if ( count > max_answers ) {
-					// eslint-disable-next-line no-alert
 					alert( msg1.replace( '$1', max_answers ) );
 					return false;
 				}
@@ -216,7 +213,6 @@ $( function () {
 			} );
 	} );
 
-	// eslint-disable-next-line no-unused-vars
 	$( '.ci_form_section_submit button' ).on( 'click', function ( evt ) {
 		var form_el = $( this ).closest( '.ci_form' );
 
@@ -334,7 +330,6 @@ $( function () {
 						var minNumber = min_answers || Math.floor( inputs / 2 ) + 1;
 
 						if ( filledIn < minNumber ) {
-							// eslint-disable-next-line no-alert
 							alert(
 								msg2
 									.replace( '$1', minNumber )
@@ -352,7 +347,6 @@ $( function () {
 								'input[type=checkbox][name$=_selected]:checked'
 							).length;
 							if ( checked < min_answers ) {
-								// eslint-disable-next-line no-alert
 								alert(
 									msg2
 										.replace( '$1', min_answers )
