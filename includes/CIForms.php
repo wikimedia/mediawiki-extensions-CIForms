@@ -131,7 +131,7 @@ class CIForms {
 	/**
 	 * @param DatabaseUpdater|null $updater
 	 */
-	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater = null ) {
+	public static function onLoadExtensionSchemaUpdates( ?DatabaseUpdater $updater = null ) {
 		$base = __DIR__;
 		$dbType = $updater->getDB()->getType();
 		$array = [
