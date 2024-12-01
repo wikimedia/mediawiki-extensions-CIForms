@@ -764,7 +764,7 @@ class CIForms {
 								// I [to be=was] proud to win ...
 								[ $a, $b ] = preg_split( "/\s*=\s*/", $matches[1][$i], -1, PREG_SPLIT_NO_EMPTY ) + [ null, null ];
 							}
-							$found_suggestion = preg_grep( '/^' . preg_quote( $a ) . '$/i', $suggestions );
+							$found_suggestion = preg_grep( '/^' . preg_quote( (string)$a ) . '$/i', $suggestions );
 							if ( count( $found_suggestion ) ) {
 								$answers[] = array_shift( $found_suggestion );
 							}
@@ -792,8 +792,17 @@ class CIForms {
 					$output .= '</div>';
 				}
 				$list_type_ordered = in_array( $list_style, self::$ordered_styles );
+
+				// https://www.mediawiki.org/wiki/Topic:Yh239sott8bbkc0e
+				$id_ = rand( 0, getrandmax() );
+				$output .= '<style>';
+				$output .= '.ci_form #ci_form_list_' . $id_ . ' li::before {';
 				// https://stackoverflow.com/questions/23699128/how-can-i-reset-a-css-counter-to-the-start-attribute-of-the-given-list
-				$output .= '<' . ( !$list_type_ordered ? 'ul' : 'ol' ) . ' class="ci_form_section_cloze_test_list" style="--list_style_type:' . $list_style . '">';
+				// *** the use of the css variable isn't anymore necessary
+				$output .= '	content: counter( li, ' . $list_style . ' );';
+				$output .= '}';
+				$output .= '</style>';
+				$output .= '<' . ( !$list_type_ordered ? 'ul' : 'ol' ) . ' id="ci_form_list_' . $id_ . '" class="ci_form_section_cloze_test_list">';
 				$n = 0;
 				foreach ( $items as $value ) {
 					[ $label, $example, $inputs ] = $value;

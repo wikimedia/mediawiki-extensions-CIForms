@@ -20,6 +20,7 @@
  * @author thomas-topway-it <support@topway.it>
  * @copyright Copyright © 2021-2024, https://wikisphere.org
  */
+
 use Dompdf\Dompdf;
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -78,7 +79,7 @@ class CIFormsSubmit extends SpecialPage {
 		}
 		$form_result = $this->parseForm( $post );
 		if ( empty( $form_result['form_values'] ) ) {
-			return $this->exit( $out, "no submission data", null, null );
+			return $this->exit( $out, 'no submission data', null, null );
 		}
 		$dbr = \CIForms::getDB( DB_REPLICA );
 		$this->dbType = $dbr->getType();
@@ -104,15 +105,20 @@ class CIFormsSubmit extends SpecialPage {
 			$form_result['form_values']['title'],
 			Title::newFromText( $form_result['form_values']['pagename'] )->getFullURL()
 		);
-		$message_body .= "<br /><br /><br />" . $this->msg( 'ci-forms-credits' );
+		$message_body .= '<br /><br /><br />' . $this->msg( 'ci-forms-credits' );
 		$attachment = $this->createPDF( $form_result, $username, date( 'Y-m-d H:i:s' ) );
-		$from = ( !empty( $senderName ) ? $senderName . ' <' . $senderEmail . '>' : $senderEmail );
+
+		$from = new MailAddress(
+			$senderEmail,
+			$senderName,
+		);
+
 		$filename = $this->msg( 'ci-forms-email-subject', $form_result['form_values']['title'], $wgSitename );
 
 		$result_success = $this->sendEmail( $from, $submit_valid, $subject, $message_body, $filename, $attachment );
 
 		// @see https://www.mediawiki.org/wiki/Topic:Xdy6mfzzqpx4lsu3
-		if ( $user->getEmail() ) {
+		if ( !empty( $user->getEmail() ) ) {
 			$this->sendEmail( $from, [ $user->getEmail() ], $subject, $message_body, $filename, $attachment );
 		}
 
@@ -120,7 +126,7 @@ class CIFormsSubmit extends SpecialPage {
 	}
 
 	/**
-	 * @param string $from
+	 * @param MailAddress $from
 	 * @param array $to
 	 * @param string $subject
 	 * @param string $message_body
@@ -129,8 +135,46 @@ class CIFormsSubmit extends SpecialPage {
 	 * @return bool
 	 */
 	private function sendEmail( $from, $to, $subject, $message_body, $filename, $attachment ) {
+		// *** unfortunately we cannot use MediaWiki's
+		// UserMailer since it does not support attachments
+		if ( class_exists( 'EmailNotifications' )
+			&& strtolower( $GLOBALS['wgCIFormsMailer'] ) == 'emailnotifications'
+		) {
+			$errors = [];
+			$attachments = [
+				[
+					'body' => $attachment,
+					'name' => $filename,
+					'contentType' => 'application/pdf'
+				]
+			];
+			$headers = [];
+			if ( !empty( $GLOBALS['wgUserEmailUseReplyTo'] ) && !empty( $this->getUser()->getEmail() ) ) {
+				$headers['Reply-To'] = [ $this->getUser()->getEmail() ];
+			}
+			// @phan-suppress-next-line PhanUndeclaredClassMethod
+			EmailNotifications::sendEmail(
+				$headers,
+				$to,
+				$from,
+				$subject,
+				null,
+				$message_body,
+				$attachments,
+				$errors
+			);
+
+			if ( count( $errors ) ) {
+				foreach ( $errors as $msg ) {
+					// @phan-suppress-next-line PhanUndeclaredClassStaticProperty
+					EmailNotifications::$Logger->error( $msg );
+				}
+			}
+
+			return !count( $errors );
+		}
+
 		// https://github.com/PHPMailer/PHPMailer/blob/master/examples/sendmail.phps
-		// Create a new PHPMailer instance
 		$mail = new PHPMailer( true );
 
 		try {
@@ -150,7 +194,9 @@ class CIFormsSubmit extends SpecialPage {
 			$mail->IsHTML( true );
 
 			// @see https://www.mediawiki.org/w/index.php?title=Topic:Xm1ys3dm8ijlegyb&topic_showPostId=xm1ys3dm8mhnmkwj#flow-post-xm1ys3dm8mhnmkwj
-			$mail->CharSet = "text/html; charset=UTF-8;";
+			$mail->CharSet = 'text/html; charset=UTF-8;';
+
+			$from = ( !empty( $from->name ) ? $from->name . ' <' . $from->address . '>' : $from->address );
 
 			$mail->setFrom( $from );
 			foreach ( $to as $email ) {
@@ -160,7 +206,7 @@ class CIFormsSubmit extends SpecialPage {
 			$mail->msgHTML( $message_body );
 			// $mail->addAttachment($attachment);
 
-			$mail->AddStringAttachment( $attachment, $filename . '.pdf', "base64", "application/pdf" );
+			$mail->AddStringAttachment( $attachment, $filename . '.pdf', 'base64', 'application/pdf' );
 			$mail->send();
 			return empty( $mail->ErrorInfo );
 		} catch ( Exception $e ) {
@@ -282,14 +328,14 @@ class CIFormsSubmit extends SpecialPage {
 		if ( $globalMode !== CIFORMS_VALUE_IF_NULL || empty( $local ) ) {
 			$output = $global;
 			if ( $types[$globalName] == 'array' && !is_array( $global ) ) {
-				$output = preg_split( "/\s*,\s*/", $output, -1, PREG_SPLIT_NO_EMPTY );
+				$output = preg_split( '/\s*,\s*/', $output, -1, PREG_SPLIT_NO_EMPTY );
 			}
 		}
 		if ( $globalMode === CIFORMS_VALUE_OVERRIDE ) {
 			return $output;
 		}
 		if ( $types[$globalName] == 'array' ) {
-			$local = preg_split( "/\s*,\s*/", $local, -1, PREG_SPLIT_NO_EMPTY );
+			$local = preg_split( '/\s*,\s*/', $local, -1, PREG_SPLIT_NO_EMPTY );
 		}
 		if ( empty( $local ) && $globalMode === CIFORMS_VALUE_IF_NULL ) {
 			return $output;

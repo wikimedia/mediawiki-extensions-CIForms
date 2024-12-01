@@ -99,7 +99,7 @@
 			]
 		}
 	},
-	"config_prefix": "CIForms",
+	"config_prefix": "wgCIForms",
 	"config": {
 		"Mailer": {
 			"value": "sendmail"

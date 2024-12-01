@@ -1,4 +1,27 @@
+/**
+ * This file is part of the MediaWiki extension CIForms.
+ *
+ * CIForms is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * CIForms is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with CIForms.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @file
+ * @ingroup extensions
+ * @author thomas-topway-it <support@topway.it>
+ * @copyright Copyright ©2021-2024, https://wikisphere.org
+ */
+
 /* stylelint-disable color-named */
+/* stylelint-disable declaration-no-important */
 
 *:has( [ class*='ci_form' ] ) {
 	box-sizing: border-box;
@@ -240,7 +263,7 @@
 }
 
 ol.ci_form_section_cloze_test_list li.ci_form_section_cloze_test_list_question_example::before {
-	content: '';
+	content: '' !important;
 	background-image: url( images/arrow_right.png );
 	display: inline-block;
 	width: 1em;
@@ -262,7 +285,6 @@ ol.ci_form_section_cloze_test_list li.ci_form_section_cloze_test_list_question_e
 */
 .ci_form ol li::before,
 .ci_form ul li::before {
-	content: counter( li, var( --list_style_type ) );
 	display: inline-block;
 	width: 1em;
 	margin-left: -1.5em;
