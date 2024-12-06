@@ -42,6 +42,11 @@ class CIFormsApiCheckLatestVersion extends ApiBase {
 	 * @inheritDoc
 	 */
 	public function execute() {
+		// @see https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/extensions/PageProperties/+/951f570515113c6205b13e5b77a80ee2ac21d89a%5E%21/
+		if ( !empty( $GLOBALS['wgCIFormsDisableVersionCheck'] ) ) {
+			$this->dieWithError( 'apierror-ciforms-permissions-error' );
+		}
+
 		$result = $this->getResult();
 		$contents = file_get_contents( 'https://www.mediawiki.org/wiki/Extension:CIForms' );
 

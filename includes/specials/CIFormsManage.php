@@ -84,6 +84,10 @@ class CIFormsManage extends QueryPage {
 		$this->form_title = $request->getVal( 'form_title' );
 		$this->page_id = $request->getVal( 'page_id' );
 
+		if ( $request->wasPosted() ) {
+			$this->deleteItems( $request->getVal( 'delete' ) );
+		}
+
 		$this->userGroups = $this->getUserGroups();
 
 		$download = $request->getVal( 'download' );
@@ -229,6 +233,29 @@ class CIFormsManage extends QueryPage {
 
 		// ***edited
 		} else {
+			$out->addHTML( "<br />" );
+		}
+
+		if ( !empty( $this->form_title ) ) {
+			$out->addHTML( "<br />" );
+			$out->addHTML( new OOUI\ButtonWidget(
+				[
+					'label' => $this->msg( 'ci-forms-manage-pager-button-select-all' )->text(),
+					'infusable' => true,
+					'flags' => [ 'progressive' ],
+					'id' => 'ci-forms-manage-pager-button-select-all',
+				]
+			) );
+			$out->addHTML( new OOUI\ButtonWidget(
+				[
+					'label' => $this->msg( 'ci-forms-manage-pager-button-delete-selected' )->text(),
+					'infusable' => true,
+					'flags' => [ 'progressive', 'destructive' ],
+					'id' => 'ci-forms-manage-pager-button-delete-selected',
+					// 'href' => ''	// SpecialPage::getTitleFor( 'CIFormsManage' )->getLocalURL()
+				]
+			) );
+			$out->addHTML( "<br />" );
 			$out->addHTML( "<br />" );
 		}
 
@@ -540,6 +567,21 @@ class CIFormsManage extends QueryPage {
 	}
 
 	/**
+	 * @param string $IDs
+	 * @return void
+	 */
+	public static function deleteItems( $IDs ) {
+		if ( !empty( $IDs ) ) {
+			$dbw = CIForms::getDB( DB_PRIMARY );
+			$tablename = 'CIForms_submissions';
+			$IDs = array_map( static function ( $value ) use ( $dbw ) {
+				return $dbw->addQuotes( $value );
+			}, explode( ',', $IDs ) );
+			$dbw->delete( $tablename, [ 'id IN (' . implode( ',', $IDs ) . ')' ], __METHOD__ );
+		}
+	}
+
+	/**
 	 * @return array
 	 */
 	protected function getUserGroups() {
@@ -736,6 +778,8 @@ AND title = ' . $dbr->addQuotes( $this->form_title )
 			if ( $row && $row !== [ false ] && !empty( $row['data'] ) ) {
 				$data = json_decode( $row['data'], true );
 				$headers = [];
+
+				$headers['select'] = $this->msg( 'ci-forms-manage-pager-header-select' );
 				$headers['entry'] = $this->msg( 'ci-forms-manage-pager-header-entry' )->text();
 				$headers['username'] = $this->msg( 'ci-forms-manage-pager-header-username' )->text();
 
@@ -889,6 +933,14 @@ AND title = ' . $dbr->addQuotes( $this->form_title )
 				}
 			} else {
 				switch ( $key ) {
+					case 'select':
+						// @see MediaWiki\HTMLForm\Field\HTMLCheckField
+						$formatted = new \OOUI\CheckboxInputWidget( [
+							'classes' => [ 'ciforms-manage-button-select' ],
+							'data' => [ 'id' => $result['id'] ],
+							'infusable' => true
+						] );
+						break;
 					case 'entry':
 						$formatted = $this->entry;
 						break;

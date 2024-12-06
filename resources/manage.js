@@ -16,7 +16,7 @@
  *
  * @file
  * @author thomas-topway-it <thomas.topway.it@mail.com>
- * @copyright Copyright © 2021-2022, https://wikisphere.org
+ * @copyright Copyright © 2021-2024, https://wikisphere.org
  */
 
 $( document ).ready( function () {
@@ -33,7 +33,7 @@ $( document ).ready( function () {
 							var messageWidget = new OO.ui.MessageWidget( {
 								type: 'warning',
 								label: new OO.ui.HtmlSnippet(
-									mw.msg( 'ciforms-jsmodule-pageproperties-outdated-version' )
+									mw.msg( 'ciforms-jsmodule-outdated-version' )
 								),
 								// *** this does not work before ooui v0.43.0
 								showClose: true
@@ -74,6 +74,52 @@ $( document ).ready( function () {
 				} );
 		} );
 	}
+
+	// $( '.ciforms-manage-button-select' ).each( function () {
+	// @see https://www.mediawiki.org/wiki/OOUI/Using_OOUI_in_MediaWiki
+	// var checkBox = OO.ui.infuse( $( this ) );
+	// } );
+
+	var selected = false;
+	$( '#ci-forms-manage-pager-button-select-all' ).on( 'click', function ( evt ) {
+		selected = !selected;
+		$( '.ciforms-manage-button-select' ).each( function () {
+			// @see https://www.mediawiki.org/wiki/OOUI/Using_OOUI_in_MediaWiki
+			var checkBox = OO.ui.infuse( $( this ) );
+			checkBox.setSelected( selected );
+		} );
+	} );
+
+	$( '#ci-forms-manage-pager-button-delete-selected' ).on( 'click', function ( evt ) {
+		var arr = [];
+		$( '.ciforms-manage-button-select' ).each( function () {
+			var checkBox = OO.ui.infuse( $( this ) );
+			if ( checkBox.isSelected() ) {
+				arr.push( checkBox.getData().id );
+			}
+		} );
+
+		if ( !arr.length ) {
+			return false;
+		}
+
+		if ( !confirm( mw.msg( 'ciforms-jsmodule-confirm-delete' ) ) ) {
+			return false;
+		}
+
+		var url = window.location.href;
+		var form = $( '<form>', {
+			action: window.location.href,
+			method: 'POST'
+			// 'target': '_top'
+		} ).append( $( '<input>', {
+			name: 'delete',
+			value: arr.join( ',' )
+		} ) );
+		$( document.body ).append( form );
+		form.submit();
+		return false;
+	} );
 
 	$( '.ciforms-manage-button-export' ).each( function () {
 		var $buttonExport = $( this );

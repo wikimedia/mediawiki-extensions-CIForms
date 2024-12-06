@@ -76,7 +76,8 @@
 				"ci-forms-manage-pager-button-export",
 				"ci-forms-manage-pager-button-export-csv",
 				"ci-forms-manage-pager-button-export-excel",
-				"ciforms-jsmodule-pageproperties-outdated-version"
+				"ciforms-jsmodule-outdated-version",
+				"ciforms-jsmodule-confirm-delete"
 			],
 			"targets": [
 				"desktop",
@@ -163,6 +164,9 @@
 		},
 		"SenderName": {
 			"value": null
+		},
+		"DisableVersionCheck": {
+			"value": false
 		}
 	},
 	"manifest_version": 2
