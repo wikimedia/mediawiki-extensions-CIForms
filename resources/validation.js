@@ -63,10 +63,12 @@ $( function () {
 			);
 	}
 
-	executeRecaptchaValidation();
+	if ( site_key ) {
+		executeRecaptchaValidation();
 
-	// refresh each 90 seconds
-	setInterval( executeRecaptchaValidation, 90 * 1000 );
+		// refresh each 90 seconds
+		setInterval( executeRecaptchaValidation, 90 * 1000 );
+	}
 
 	$( '.ci_form' ).each( function ( index ) {
 		var paging = $( this )
