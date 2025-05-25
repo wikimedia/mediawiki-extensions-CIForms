@@ -19,18 +19,18 @@
  * @copyright Copyright © 2021-2024, https://wikisphere.org
  */
 
-$( document ).ready( function () {
+$( document ).ready( () => {
 	// display every 3 days
 	if ( !mw.cookie.get( 'ciforms-check-latest-version' ) ) {
-		mw.loader.using( 'mediawiki.api', function () {
+		mw.loader.using( 'mediawiki.api', () => {
 			new mw.Api()
 				.postWithToken( 'csrf', {
 					action: 'ciforms-check-latest-version'
 				} )
-				.done( function ( res ) {
+				.done( ( res ) => {
 					if ( 'ciforms-check-latest-version' in res ) {
 						if ( res[ 'ciforms-check-latest-version' ].result === 2 ) {
-							var messageWidget = new OO.ui.MessageWidget( {
+							const messageWidget = new OO.ui.MessageWidget( {
 								type: 'warning',
 								label: new OO.ui.HtmlSnippet(
 									mw.msg( 'ciforms-jsmodule-outdated-version' )
@@ -38,8 +38,8 @@ $( document ).ready( function () {
 								// *** this does not work before ooui v0.43.0
 								showClose: true
 							} );
-							var closeFunction = function () {
-								var three_days = 3 * 86400;
+							const closeFunction = function () {
+								const three_days = 3 * 86400;
 								mw.cookie.set( 'ciforms-check-latest-version', true, {
 									path: '/',
 									expires: three_days
@@ -59,7 +59,7 @@ $( document ).ready( function () {
 								messageWidget.$element.addClass(
 									'oo-ui-messageWidget-showClose'
 								);
-								var closeButton = new OO.ui.ButtonWidget( {
+								const closeButton = new OO.ui.ButtonWidget( {
 									classes: [ 'oo-ui-messageWidget-close' ],
 									framed: false,
 									icon: 'close',
@@ -80,20 +80,20 @@ $( document ).ready( function () {
 	// var checkBox = OO.ui.infuse( $( this ) );
 	// } );
 
-	var selected = false;
-	$( '#ci-forms-manage-pager-button-select-all' ).on( 'click', function ( evt ) {
+	let selected = false;
+	$( '#ci-forms-manage-pager-button-select-all' ).on( 'click', ( evt ) => {
 		selected = !selected;
 		$( '.ciforms-manage-button-select' ).each( function () {
 			// @see https://www.mediawiki.org/wiki/OOUI/Using_OOUI_in_MediaWiki
-			var checkBox = OO.ui.infuse( $( this ) );
+			const checkBox = OO.ui.infuse( $( this ) );
 			checkBox.setSelected( selected );
 		} );
 	} );
 
-	$( '#ci-forms-manage-pager-button-delete-selected' ).on( 'click', function ( evt ) {
-		var arr = [];
+	$( '#ci-forms-manage-pager-button-delete-selected' ).on( 'click', ( evt ) => {
+		const arr = [];
 		$( '.ciforms-manage-button-select' ).each( function () {
-			var checkBox = OO.ui.infuse( $( this ) );
+			const checkBox = OO.ui.infuse( $( this ) );
 			if ( checkBox.isSelected() ) {
 				arr.push( checkBox.getData().id );
 			}
@@ -107,8 +107,8 @@ $( document ).ready( function () {
 			return false;
 		}
 
-		var url = window.location.href;
-		var form = $( '<form>', {
+		const url = window.location.href;
+		const form = $( '<form>', {
 			action: window.location.href,
 			method: 'POST'
 			// 'target': '_top'
@@ -122,11 +122,11 @@ $( document ).ready( function () {
 	} );
 
 	$( '.ciforms-manage-button-export' ).each( function () {
-		var $buttonExport = $( this );
+		const $buttonExport = $( this );
 
-		var href = $buttonExport.data().ooui.href;
+		const href = $buttonExport.data().ooui.href;
 
-		var buttonMenu = new OO.ui.ButtonMenuSelectWidget( {
+		const buttonMenu = new OO.ui.ButtonMenuSelectWidget( {
 			label: mw.msg( 'ci-forms-manage-pager-button-export' ),
 			icon: 'menu',
 			flags: [ 'progressive', 'primary' ],
@@ -144,14 +144,14 @@ $( document ).ready( function () {
 			}
 		} );
 
-		var panelLayout = new OO.ui.PanelLayout( {
+		const panelLayout = new OO.ui.PanelLayout( {
 			padded: false,
 			expanded: false,
 			classes: [ 'ci-forms-manage-pager-panel-layout' ]
 		} );
 
-		buttonMenu.getMenu().on( 'choose', function ( menuOption ) {
-			var data = menuOption.getData();
+		buttonMenu.getMenu().on( 'choose', ( menuOption ) => {
+			const data = menuOption.getData();
 			window.location.assign( href.replace( 'format=csv', 'format=' + data ) );
 		} );
 

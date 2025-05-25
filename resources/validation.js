@@ -19,12 +19,12 @@
  * @copyright Copyright © 2021-2024, https://wikisphere.org
  */
 
-$( function () {
-	var msg1 = mw.config.get( 'ci-forms-validation-msg1' );
-	var msg2 = mw.config.get( 'ci-forms-validation-msg2' );
+$( () => {
+	const msg1 = mw.config.get( 'ci-forms-validation-msg1' );
+	const msg2 = mw.config.get( 'ci-forms-validation-msg2' );
 	// var msg3 = mw.config.get( 'ci-forms-validation-msg3' );
 
-	var currentSection = {};
+	const currentSection = {};
 
 	function escape( s ) {
 		return String( s )
@@ -35,29 +35,29 @@ $( function () {
 			.replace( />/g, '\x3E' );
 	}
 
-	var site_key = mw.config.get( 'ci_forms_google_recaptcha_site_key' );
+	const site_key = mw.config.get( 'ci_forms_google_recaptcha_site_key' );
 
 	// @see https://www.mediawiki.org/wiki/Topic:Y2pfh94nkkqzsjw3
 	function executeRecaptchaValidation() {
 		mw.loader
 			.getScript( 'https://www.google.com/recaptcha/api.js?render=' + site_key )
 			.then(
-				function () {
+				() => {
 					if ( $( 'input[name="g-recaptcha-response"]' ).length ) {
-						grecaptcha.ready( function () {
+						grecaptcha.ready( () => {
 							grecaptcha
 								.execute( site_key, { action: 'validate_captcha' } )
-								.then( function ( token ) {
+								.then( ( token ) => {
 									$( 'input[name="g-recaptcha-response"]' ).val( token );
 								} )
-								.catch( function ( error ) {
+								.catch( ( error ) => {
 									// eslint-disable-next-line no-console
 									console.log( error );
 								} );
 						} );
 					}
 				},
-				function ( e ) {
+				( e ) => {
 					mw.log.error( e.message );
 				}
 			);
@@ -71,7 +71,7 @@ $( function () {
 	}
 
 	$( '.ci_form' ).each( function ( index ) {
-		var paging = $( this )
+		const paging = $( this )
 			.find( 'input[type=hidden][name=form_paging]' )
 			.first()
 			.val();
@@ -92,19 +92,19 @@ $( function () {
 	} );
 
 	$( '.ci_form li' ).each( function ( index ) {
-		var el = this;
-		var section_el = $( this ).closest( '.ci_form_section' );
-		var radioForCheckboxes = $( section_el )
+		const el = this;
+		const section_el = $( this ).closest( '.ci_form_section' );
+		const radioForCheckboxes = $( section_el )
 			.find( '.radio_for_required_checkboxes' )
 			.first();
-		var max_answers = $( section_el )
+		const max_answers = $( section_el )
 			.find( 'input[type=hidden][name$=_multiple-choice-max-answers]' )
 			.val();
 
 		$( this )
 			.find( 'input[type=text]' )
 			.on( 'click', function () {
-				var count = $( section_el ).find( 'input[type=checkbox]:checked' ).length;
+				const count = $( section_el ).find( 'input[type=checkbox]:checked' ).length;
 
 				if ( count > max_answers ) {
 					alert( msg1.replace( '$1', max_answers ) );
@@ -123,8 +123,8 @@ $( function () {
 
 		$( this )
 			.find( 'input[type=checkbox]' )
-			.on( 'click', function () {
-				var count = $( section_el ).find( 'input[type=checkbox]:checked' ).length;
+			.on( 'click', () => {
+				const count = $( section_el ).find( 'input[type=checkbox]:checked' ).length;
 
 				if ( count > max_answers ) {
 					alert( msg1.replace( '$1', max_answers ) );
@@ -136,14 +136,14 @@ $( function () {
 
 	// https://stackoverflow.com/questions/15031513/jquery-help-to-enforce-maxlength-on-textarea
 	$( '.ci_form textarea[maxlength]' ).on( 'keyup', function () {
-		var limit = parseInt( $( this ).attr( 'maxlength' ) );
-		var text = $( this ).val();
-		var chars = text.length;
+		const limit = parseInt( $( this ).attr( 'maxlength' ) );
+		const text = $( this ).val();
+		const chars = text.length;
 
 		$( this )
 			.parents()
 			.each( function () {
-				var span = $( this )
+				const span = $( this )
 					.find( '.ci_form_section_inputs_textarea_maxlength' )
 					.first();
 
@@ -153,7 +153,7 @@ $( function () {
 			} );
 
 		if ( chars > limit ) {
-			var new_text = text.slice( 0, Math.max( 0, limit ) );
+			const new_text = text.slice( 0, Math.max( 0, limit ) );
 			$( this ).val( new_text );
 		}
 	} );
@@ -168,16 +168,16 @@ $( function () {
 	// is triggered after the native validation
 
 	$( '.ci_form input[type=radio]' ).on( 'click', function () {
-		var section_el = $( this ).closest( '.ci_form_section' );
+		const section_el = $( this ).closest( '.ci_form_section' );
 
 		$( section_el )
 			.find( 'li' )
 			.each( function () {
-				var el = this;
+				const el = this;
 
 				$( this )
 					.find( 'input[type=radio][name$=_selected]:checked' )
-					.each( function () {
+					.each( () => {
 						$( el )
 							.find( 'input[type=text][data-required="1"]' )
 							.prop( 'required', true );
@@ -185,23 +185,23 @@ $( function () {
 
 				$( this )
 					.find( 'input[type=radio][name$=_selected]:not(:checked)' )
-					.each( function () {
+					.each( () => {
 						$( el ).find( 'input[type=text]' ).removeAttr( 'required' );
 					} );
 			} );
 	} );
 
 	$( '.ci_form input[type=checkbox]' ).on( 'click', function () {
-		var section_el = $( this ).closest( '.ci_form_section' );
+		const section_el = $( this ).closest( '.ci_form_section' );
 
 		$( section_el )
 			.find( 'li' )
 			.each( function () {
-				var el = this;
+				const el = this;
 
 				$( this )
 					.find( 'input[type=checkbox][name$=_selected]:checked' )
-					.each( function () {
+					.each( () => {
 						$( el )
 							.find( 'input[type=text][data-required="1"]' )
 							.prop( 'required', true );
@@ -209,16 +209,16 @@ $( function () {
 
 				$( this )
 					.find( 'input[type=checkbox][name$=_selected]:not(:checked)' )
-					.each( function () {
+					.each( () => {
 						$( el ).find( 'input[type=text]' ).removeAttr( 'required' );
 					} );
 			} );
 	} );
 
 	$( '.ci_form_section_submit button' ).on( 'click', function ( evt ) {
-		var form_el = $( this ).closest( '.ci_form' );
+		const form_el = $( this ).closest( '.ci_form' );
 
-		var next = $( this ).prop( 'class' ).indexOf( 'next' ) !== -1;
+		const next = $( this ).prop( 'class' ).includes( 'next' );
 
 		if ( next ) {
 			return;
@@ -226,10 +226,10 @@ $( function () {
 
 		form_el.get( 0 ).scrollIntoView();
 
-		var index = form_el.data( 'form-index' );
-		var current_section = currentSection[ index ] + ( next ? 1 : -1 );
+		const index = form_el.data( 'form-index' );
+		const current_section = currentSection[ index ] + ( next ? 1 : -1 );
 
-		var count =
+		const count =
 			$( form_el ).find( "[class^='ci_form_section_display_']" ).length - 1;
 
 		// $(form_el).find(".ci_form_section").length - 1;
@@ -272,16 +272,16 @@ $( function () {
 	} );
 
 	$( '.ci_form' ).on( 'submit', function ( evt ) {
-		var form_el = $( this );
+		const form_el = $( this );
 
 		form_el.get( 0 ).scrollIntoView();
 
-		var paging = $( this )
+		const paging = $( this )
 			.find( 'input[type=hidden][name=form_paging]' )
 			.first()
 			.val();
 
-		var index, current_section, count;
+		let index, current_section, count;
 
 		if ( paging && paging !== 'false' ) {
 			index = form_el.data( 'form-index' );
@@ -291,7 +291,7 @@ $( function () {
 			// $(form_el).find(".ci_form_section").length - 1;
 		}
 
-		var preventSubmit = false;
+		let preventSubmit = false;
 		$( this )
 			.find(
 				( paging && paging !== 'false' ?
@@ -299,15 +299,15 @@ $( function () {
 					'' ) + '.ci_form_section'
 			)
 			.each( function () {
-				var section_type = $( this )
+				const section_type = $( this )
 					.find( 'input[type=hidden][name$=_section_type]' )
 					.val();
 
-				var min_answers = $( this )
+				const min_answers = $( this )
 					.find( 'input[type=hidden][name$=_multiple-choice-min-answers]' )
 					.val();
 
-				var question_name = $( this ).find( '.ci_form_section_title' ).text();
+				let question_name = $( this ).find( '.ci_form_section_title' ).text();
 
 				if ( !question_name ) {
 					question_name = $( form_el ).find( '.ci_form_title' ).text();
@@ -321,7 +321,7 @@ $( function () {
 						$( this )
 							.find( 'input[type=text][name$=_value]' )
 							.each( function () {
-								var val = $( this ).val().trim();
+								const val = $( this ).val().trim();
 
 								if ( val !== '' && val !== null ) {
 									filledIn++;
@@ -345,7 +345,7 @@ $( function () {
 
 					case 'multiple choice':
 						if ( min_answers ) {
-							var checked = $( this ).find(
+							const checked = $( this ).find(
 								'input[type=checkbox][name$=_selected]:checked'
 							).length;
 							if ( checked < min_answers ) {
