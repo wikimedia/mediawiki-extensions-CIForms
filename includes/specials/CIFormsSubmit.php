@@ -70,7 +70,6 @@ class CIFormsSubmit extends SpecialPage {
 		if ( CIForms::isCaptchaEnabled() ) {
 			[ $result, $message, $captcha_message ] =
 				$this->check_captcha( $post ) + [ null, null, null ];
-			// @phan-suppress-next-line PhanSuspiciousValueComparison
 			if ( $result === false ) {
 				return $this->exit( $out,
 					$this->msg( $message, $captcha_message, $senderEmail )
@@ -210,10 +209,7 @@ class CIFormsSubmit extends SpecialPage {
 			$mail->AddStringAttachment( $attachment, $filename . '.pdf', 'base64', 'application/pdf' );
 			$mail->send();
 			return empty( $mail->ErrorInfo );
-		} catch ( Exception $e ) {
-			// echo $e->getMessage();
-			// echo $e->errorMessage();
-			// echo "Mailer Error: " . $mail->ErrorInfo;
+		} catch ( Exception ) {
 			return false;
 		}
 	}
@@ -289,10 +285,9 @@ class CIFormsSubmit extends SpecialPage {
 
 	/**
 	 * @param string $sql
-	 * @param bool $raw
 	 * @return string
 	 */
-	private function sqlReplace( $sql, $raw = false ) {
+	private function sqlReplace( $sql ) {
 		$dbr = \CIForms::getDB( DB_REPLICA );
 		if ( $this->dbType == 'postgres' ) {
 			$sql = str_replace( 'CIForms_', 'ciforms_', $sql );
@@ -646,7 +641,6 @@ class CIFormsSubmit extends SpecialPage {
 									CIForms::ci_form_parse_input_symbol( $matches[2] ) + [ null, null, null ];
 								$required =
 									( !empty( $matches[3] ) ? ' data-required="1" required' : '' );
-								// @phan-suppress-next-line PhanRedundantCondition
 								if ( $required && !empty( $placeholder ) ) {
 									$placeholder .= ' *';
 								}
@@ -717,7 +711,7 @@ class CIFormsSubmit extends SpecialPage {
 							( $example ? '_example' : '' ) . '">';
 						$i = 0;
 						$output .= preg_replace_callback( '/\[\s*([^\[\]]*)\s*\]\s*\*?/',
-							static function ( $matches ) use ( &$i, $value, $section, $example ) {
+							static function ( $matches ) use ( &$i, $value ) {
 									$a = $b = null;
 								if ( !empty( $matches[1] ) ) {
 									[ $a, $b ] = preg_split( "/\s*=\s*/", $matches[1] ) + [ null, null ];

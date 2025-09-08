@@ -280,10 +280,9 @@ class CIFormsManage extends QueryPage {
 
 	/**
 	 * @param string $sql
-	 * @param bool $raw
 	 * @return string
 	 */
-	private function sqlReplace( $sql, $raw = false ) {
+	private function sqlReplace( $sql ) {
 		$dbr = CIForms::getDB( DB_REPLICA );
 
 		if ( $this->dbType == 'postgres' ) {
@@ -301,10 +300,9 @@ class CIFormsManage extends QueryPage {
 	}
 
 	/**
-	 * @param bool $raw
 	 * @return string
 	 */
-	private function permissionsCond( $raw ) {
+	private function permissionsCond() {
 		$dbr = CIForms::getDB( DB_REPLICA );
 
 		$userGroups = $this->userGroups;
@@ -318,7 +316,7 @@ class CIFormsManage extends QueryPage {
 			. 'submission_id = `' . $this->escapedDBprefix . 'CIForms_submissions`.id AND '
 
 			// $userGroups gives a "false positive" SecurityCheck-SQLInjection
-			. 'usergroup IN(' . implode( ',', $userGroups ) . ') )', $raw );
+			. 'usergroup IN(' . implode( ',', $userGroups ) . ') )' );
 	}
 
 	/**
@@ -329,7 +327,7 @@ class CIFormsManage extends QueryPage {
 		$conds = [ 'id' => $submission_id ];
 
 		if ( !$this->isSysop() ) {
-			$conds[] = $this->permissionsCond( false );
+			$conds[] = $this->permissionsCond();
 		}
 
 		$row = $dbr->selectRow(
@@ -374,7 +372,7 @@ class CIFormsManage extends QueryPage {
 		$conds = [ 'id' => $submission_id ];
 
 		if ( !$this->isSysop() ) {
-			$conds[] = $this->permissionsCond( false );
+			$conds[] = $this->permissionsCond();
 		}
 
 		$row = $dbr->selectRow(
@@ -710,7 +708,7 @@ class CIFormsManage extends QueryPage {
 			$sql = 'SELECT MAX(id) AS id, page_id, title, MAX(created_at) AS last_submission_date, COUNT(*) AS submissions,
 SUM(CASE WHEN shown IS NULL THEN 1 ELSE 0 END) AS new
 FROM `' . $this->escapedDBprefix . 'CIForms_submissions' . '`
-' . ( $this->isSysop() ? '' : ' WHERE ' . $this->permissionsCond( true ) ) .
+' . ( $this->isSysop() ? '' : ' WHERE ' . $this->permissionsCond() ) .
 'GROUP BY page_id, title
 ';
 
@@ -719,10 +717,10 @@ FROM `' . $this->escapedDBprefix . 'CIForms_submissions' . '`
 FROM `' . $this->escapedDBprefix . 'CIForms_submissions' . '`
 WHERE page_id = ' . $dbr->addQuotes( $this->page_id ) . '
 AND title = ' . $dbr->addQuotes( $this->form_title )
-			. ( $this->isSysop() ? '' : ' AND ' . $this->permissionsCond( true ) );
+			. ( $this->isSysop() ? '' : ' AND ' . $this->permissionsCond() );
 		}
 
-		return $this->sqlReplace( $sql, true );
+		return $this->sqlReplace( $sql );
 	}
 
 	/**
@@ -764,7 +762,7 @@ AND title = ' . $dbr->addQuotes( $this->form_title )
 			$conds = [ 'page_id' => $this->page_id, 'title' => $this->form_title ];
 
 			if ( !$this->isSysop() ) {
-				$conds[] = $this->permissionsCond( false );
+				$conds[] = $this->permissionsCond();
 			}
 
 			$row = $dbr->selectRow(
@@ -1055,11 +1053,10 @@ AND title = ' . $dbr->addQuotes( $this->form_title )
 						// @phan-suppress-next-line PhanPluginUseReturnValueInternalKnown
 						preg_replace_callback(
 							'/([^\[\]]*)\[([^\[\]]*)\]\s*(\*)?/',
-							static function ( $matches ) use ( &$i, $value, &$array, $html, $main_label, $section, $heading ) {
+							static function ( $matches ) use ( &$i, $value, &$array, $main_label, $heading ) {
 								$label = $matches[1];
 								[ $input_type, $placeholder, $input_options ] = CIForms::ci_form_parse_input_symbol( $matches[2] ) + [ null, null, null ];
 
-								// @phan-suppress-next-line PhanSuspiciousValueComparison
 								if ( $input_type === 'text' ) {
 									$input_type = 'text input';
 								}

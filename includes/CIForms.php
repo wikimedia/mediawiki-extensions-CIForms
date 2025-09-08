@@ -346,7 +346,7 @@ class CIForms {
 				if ( array_key_exists( $parameter_key, $named_parameters ) ) {
 					$parameter_value =
 						preg_replace_callback( '/' . $unique_id . '/',
-							static function ( $matches ) use ( &$replacements, $unique_id ) {
+							static function ( $matches ) use ( &$replacements ) {
 								return array_shift( $replacements );
 							},
 							$parameter_value );
@@ -383,7 +383,7 @@ class CIForms {
 		$value = Parser::stripOuterParagraph( $out_->parseAsContent( $value ) );
 		$value =
 			preg_replace_callback( '/' . $unique_id . '/',
-				static function ( $matches ) use ( &$replacements, $unique_id ) {
+				static function ( $matches ) use ( &$replacements ) {
 					return array_shift( $replacements );
 				}, $value );
 		return $value;
@@ -813,7 +813,7 @@ class CIForms {
 					$i = 0;
 					$label =
 						preg_replace_callback( '/\[([^\[\]]*)\]/',
-							static function ( $matches ) use ( &$i, &$inputs, $example, $n, $unique_id ) {
+							static function ( $matches ) use ( &$i, &$inputs, $n, $unique_id ) {
 								[ $a, $b ] = array_shift( $inputs );
 								$replacement = '';
 								if ( $a || $b ) {
