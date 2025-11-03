@@ -28,6 +28,7 @@ if ( is_readable( __DIR__ . '/../../vendor/autoload.php' ) ) {
 }
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IDatabase;
@@ -668,6 +669,7 @@ class CIFormsManage extends QueryPage {
 				$sql = $dbr->limitResult( $sql, $limit, $offset );
 			}
 
+			// @phan-suppress-next-next-line PhanUndeclaredMethod
 			// phpcs:ignore MediaWiki.Usage.DbrQueryUsage.DbrQueryFound
 			$res = $dbr->query( $sql, $fname );
 		}

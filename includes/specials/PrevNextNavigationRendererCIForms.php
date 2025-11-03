@@ -21,6 +21,9 @@
  * @copyright Copyright ©2021-2024, https://wikisphere.org
  */
 
+use MediaWiki\Html\Html;
+use MediaWiki\Title\Title;
+
 class PrevNextNavigationRendererCIForms {
 
 	/** @var array */
