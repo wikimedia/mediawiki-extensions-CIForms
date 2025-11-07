@@ -22,12 +22,8 @@
  */
 
 use Dompdf\Dompdf;
-use PHPMailer\PHPMailer\PHPMailer;
-
-if ( is_readable( __DIR__ . '/../../vendor/autoload.php' ) ) {
-	include_once __DIR__ . '/../../vendor/autoload.php';
-}
 use MediaWiki\Title\Title;
+use PHPMailer\PHPMailer\PHPMailer;
 
 class CIFormsSubmit extends SpecialPage {
 	private $dbType;

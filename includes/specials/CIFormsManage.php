@@ -21,12 +21,6 @@
  * @copyright Copyright ©2021-2024, https://wikisphere.org
  */
 
-include_once __DIR__ . '/PrevNextNavigationRendererCIForms.php';
-
-if ( is_readable( __DIR__ . '/../../vendor/autoload.php' ) ) {
-	include_once __DIR__ . '/../../vendor/autoload.php';
-}
-
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;

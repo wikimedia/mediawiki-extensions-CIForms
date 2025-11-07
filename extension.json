@@ -19,6 +19,7 @@
 		"CIForms": "includes/CIForms.php",
 		"CIFormsSubmit": "includes/specials/CIFormsSubmit.php",
 		"CIFormsManage": "includes/specials/CIFormsManage.php",
+		"PrevNextNavigationRendererCIForms": "includes/specials/PrevNextNavigationRendererCIForms.php",
 		"CIFormsApiCheckLatestVersion": "includes/api/CIFormsApiCheckLatestVersion.php"
 	},
 	"ExtensionMessagesFiles": {
@@ -169,5 +170,6 @@
 			"value": false
 		}
 	},
+	"load_composer_autoloader": true,
 	"manifest_version": 2
 }
