@@ -21,6 +21,7 @@
  * @copyright Copyright ©2021-2024, https://wikisphere.org
  */
 
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -199,7 +200,7 @@ class CIFormsManage extends QueryPage {
 
 		$dbr = $this->getRecacheDB();
 		$this->preprocessResults( $dbr, $res );
-		$out->addHTML( Xml::openElement( 'div', [ 'class' => 'mw-spcontent' ] ) );
+		$out->addHTML( Html::openElement( 'div', [ 'class' => 'mw-spcontent' ] ) );
 
 		// Top header and navigation
 
@@ -222,7 +223,7 @@ class CIFormsManage extends QueryPage {
 				# No results to show, so don't bother with "showing X of Y" etc.
 				# -- just let the user know and give up now
 				$this->showEmptyText();
-				$out->addHTML( Xml::closeElement( 'div' ) );
+				$out->addHTML( Html::closeElement( 'div' ) );
 				return;
 			}
 
@@ -269,7 +270,7 @@ class CIFormsManage extends QueryPage {
 			$out->addHTML( '<p>' . $paging . '</p>' );
 		}
 
-		$out->addHTML( Xml::closeElement( 'div' ) );
+		$out->addHTML( Html::closeElement( 'div' ) );
 	}
 
 	/**
