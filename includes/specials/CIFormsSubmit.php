@@ -29,8 +29,12 @@ class CIFormsSubmit extends SpecialPage {
 	private $dbType;
 
 	public function __construct() {
-		// not listed in the special pages index
-		parent::__construct( 'CIFormsSubmit', '', false );
+		parent::__construct( 'CIFormsSubmit' );
+	}
+
+	/** @inheritDoc */
+	public function isListed() {
+		return false;
 	}
 
 	/**
