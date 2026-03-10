@@ -123,7 +123,6 @@ class CIForms {
 						$item = '<script src="' . $url . '"></script>';
 						break;
 				}
-				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 				$outputPage->addHeadItem( 'CI_head_item_' . $key, $item );
 			}
 		}
@@ -572,7 +571,6 @@ class CIForms {
 			case 'inputs':
 			case 'inputs responsive':
 				foreach ( $body as $key => $value ) {
-					// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 					if ( $parsed[$key] === null ) {
 						$output .= '<div class="ci_form_section_inputs_row_error">';
 						$output .= wfMessage( 'ci-forms-parsing-error' )->text();

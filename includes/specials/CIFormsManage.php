@@ -234,7 +234,7 @@ class CIFormsManage extends QueryPage {
 
 		if ( !empty( $this->form_title ) ) {
 			$out->addHTML( "<br />" );
-			$out->addHTML( new OOUI\ButtonWidget(
+			$out->addHTML( (string)new OOUI\ButtonWidget(
 				[
 					'label' => $this->msg( 'ci-forms-manage-pager-button-select-all' )->text(),
 					'infusable' => true,
@@ -242,7 +242,7 @@ class CIFormsManage extends QueryPage {
 					'id' => 'ci-forms-manage-pager-button-select-all',
 				]
 			) );
-			$out->addHTML( new OOUI\ButtonWidget(
+			$out->addHTML( (string)new OOUI\ButtonWidget(
 				[
 					'label' => $this->msg( 'ci-forms-manage-pager-button-delete-selected' )->text(),
 					'infusable' => true,
