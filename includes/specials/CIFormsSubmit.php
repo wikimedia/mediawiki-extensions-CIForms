@@ -230,12 +230,13 @@ class CIFormsSubmit extends SpecialPage {
 			'created_at' => date( 'Y-m-d H:i:s' )
 		];
 		$dbr = \CIForms::getDB( DB_PRIMARY );
-		if ( !$dbr->tableExists( 'CIForms_submissions' ) ) {
+		if ( !$dbr->tableExists( 'CIForms_submissions', __METHOD__ ) ) {
 			return false;
 		}
 		$row_inserted = $dbr->insert(
 			$this->sqlReplace( 'CIForms_submissions' ),
-			$update_obj
+			$update_obj,
+			__METHOD__
 		);
 		$SubmissionGroups = self::mergeGlobal( 'data-access', $form_result['form_values'], $isLocal );
 		if ( empty( $SubmissionGroups ) ) {
@@ -257,7 +258,7 @@ class CIFormsSubmit extends SpecialPage {
 			// to the submissions
 			if ( !empty( $groups ) ) {
 
-				if ( !$dbr->tableExists( 'CIForms_submissions_groups' ) ) {
+				if ( !$dbr->tableExists( 'CIForms_submissions_groups', __METHOD__ ) ) {
 					return false;
 				}
 
@@ -275,7 +276,8 @@ class CIFormsSubmit extends SpecialPage {
 							'submission_id' => $latest_id,
 							'usergroup' => $value,
 							'created_at' => date( 'Y-m-d H:i:s' )
-						]
+						],
+						__METHOD__
 					);
 				}
 			}
