@@ -72,8 +72,8 @@ class CIFormsSubmit extends SpecialPage {
 				$this->check_captcha( $post ) + [ null, null, null ];
 			if ( $result === false ) {
 				return $this->exit( $out,
-					$this->msg( $message, $captcha_message, $senderEmail )
-						. ( $senderEmail ? "\040" . $this->msg( 'ci-forms-try-again-message', $senderEmail ) : '' ),
+					$this->msg( $message, $captcha_message, $senderEmail )->parse()
+						. ( $senderEmail ? "\040" . $this->msg( 'ci-forms-try-again-message', $senderEmail )->parse() : '' ),
 					null, null );
 			}
 		}
@@ -99,13 +99,13 @@ class CIFormsSubmit extends SpecialPage {
 		if ( !$wgEnableEmail || empty( $submit_valid ) || !class_exists( 'PHPMailer\PHPMailer\PHPMailer' ) || !class_exists( 'Dompdf\Dompdf' ) ) {
 			return $this->exit( $out, $this->exit_message( $form_result, $row_inserted, false, false, $success ), $form_result['form_values'], $success );
 		}
-		$subject = $this->msg( 'ci-forms-email-subject', $form_result['form_values']['title'], $wgSitename );
+		$subject = $this->msg( 'ci-forms-email-subject', $form_result['form_values']['title'], $wgSitename )->parse();
 		$message_body = $this->msg(
 			'ci-forms-email-content',
 			$form_result['form_values']['title'],
 			Title::newFromText( $form_result['form_values']['pagename'] )->getFullURL()
-		);
-		$message_body .= '<br /><br /><br />' . $this->msg( 'ci-forms-credits' );
+		)->parse();
+		$message_body .= '<br /><br /><br />' . $this->msg( 'ci-forms-credits' )->parse();
 		$attachment = $this->createPDF( $form_result, $username, date( 'Y-m-d H:i:s' ) );
 
 		$from = new MailAddress(
@@ -113,7 +113,7 @@ class CIFormsSubmit extends SpecialPage {
 			$senderName,
 		);
 
-		$filename = $this->msg( 'ci-forms-email-subject', $form_result['form_values']['title'], $wgSitename );
+		$filename = $this->msg( 'ci-forms-email-subject', $form_result['form_values']['title'], $wgSitename )->parse();
 
 		$result_success = $this->sendEmail( $from, $submit_valid, $subject, $message_body, $filename, $attachment );
 
@@ -366,18 +366,18 @@ class CIFormsSubmit extends SpecialPage {
 		if ( !$dispatch ) {
 			if ( $row_inserted ) {
 				$success = true;
-				return ( $successMessage ?: $this->msg( 'ci-forms-data-saved' ) );
+				return ( $successMessage ?: $this->msg( 'ci-forms-data-saved' )->parse() );
 			} else {
-				return ( $errorMessage ?: $this->msg( 'ci-forms-data-not-saved' ) );
+				return ( $errorMessage ?: $this->msg( 'ci-forms-data-not-saved' )->parse() );
 			}
 		}
 		if ( $dispatched ) {
 			$success = true;
-			return ( $successMessage ?: $this->msg( 'ci-forms-dispatch-success' ) );
+			return ( $successMessage ?: $this->msg( 'ci-forms-dispatch-success' )->parse() );
 		}
 		if ( $row_inserted ) {
 			$success = true;
-			return ( $successMessage ?: $this->msg( 'ci-forms-data-saved' ) );
+			return ( $successMessage ?: $this->msg( 'ci-forms-data-saved' )->parse() );
 		}
 		// we don't use "ci-forms-dispatch-error-contact"
 		// and "ci-forms-dispatch-error"anymore because we fallback
@@ -388,9 +388,9 @@ class CIFormsSubmit extends SpecialPage {
 			$formSubmit = self::mergeGlobal( 'submit', $form_result['form_values'], $isLocal );
 		}
 		if ( empty( $formSubmit ) ) {
-			return ( $errorMessage ?: $this->msg( 'ci-forms-data-not-saved' ) );
+			return ( $errorMessage ?: $this->msg( 'ci-forms-data-not-saved' )->parse() );
 		}
-		return ( $errorMessage ?: $this->msg( 'ci-forms-data-not-saved-contact', implode( ', ', $formSubmit ) ) );
+		return ( $errorMessage ?: $this->msg( 'ci-forms-data-not-saved-contact', implode( ', ', $formSubmit ) )->parse() );
 	}
 
 	/**
@@ -437,7 +437,7 @@ class CIFormsSubmit extends SpecialPage {
 		$form_output_html .= "<tr><td style=\"font-weight:bold\">date</td><td>$datetime</td></tr>";
 		$form_output_html .= "</table>";
 		$form_output_html .= '<br /><br /><br /><br /><br />';
-		$form_output_html .= $this->msg( 'ci-forms-credits' );
+		$form_output_html .= $this->msg( 'ci-forms-credits' )->parse();
 		$form_output_html .= '</body></html>';
 		// create pdf
 		// https://github.com/dompdf/dompdf
