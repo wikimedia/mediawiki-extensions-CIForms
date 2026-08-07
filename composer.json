@@ -2,7 +2,7 @@
 	"require": {
 		"dompdf/dompdf": "^3.0",
 		"phpmailer/phpmailer": "^6.9",
-		"phpoffice/phpspreadsheet": "^1.29"
+		"phpoffice/phpspreadsheet": "^3.10"
 	},
 	"require-dev": {
 		"mediawiki/mediawiki-codesniffer": "47.0.0",
